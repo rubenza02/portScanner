@@ -43,7 +43,16 @@ def port_scanner(port, host):
 
     try:
         s.connect((host, port))
-        print(colored(f"\n[+] El puerto {port}  esta abierto", 'green'))
+        s.sendall(b"HEAD / HTTP/1.0\r\n\r\n")
+        response = s.recv(1024)
+        response = response.decode(errors='ignore').split('\n')
+
+        if response:
+            print(colored(f"\n[+]El puerto {port} esta abierto\n", 'green'))
+            for line in response:
+                print(colored(f"{line}", 'blue'))
+        else:
+             print(colored(f"\n[+] El puerto {port}  esta abierto", 'green'))
         
         
     except (socket.timeout, ConnectionRefusedError):
@@ -77,6 +86,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
